@@ -1,3 +1,20 @@
+Do not install these dotfiles directly from my forked repo. Please use end4’s installer instead.
+
+This fork exists only as a personal .dotfiles setup, customized for my own hardware and software environment. There is a high chance that it will not be compatible with your system. I strongly recommend that you install from end4’s upstream repo, then adjust the config yourself afterward.
+
+Note:
+
+* My laptop is muxless, which is already quite a hassle to deal with. If you have a mux switch and want to use Hyprland, you should set it to dGPU-only. That will make your life much easier, because pretty dotfiles always come with some workload trade-offs. (Plain Hyprland doesn’t use much GPU, but once shells and apps with blur / shadow come into play, the load increases.)
+* Dropped the use of a custom directory.
+* Hyprland configs and environment variables are modified specifically to make it usable on an iGPU-only muxless laptop. This includes disabling blur and shadows, and routing certain workloads to the dGPU via env vars / flags.
+* In `illogical-impulse/config.json`, set `overview::enable` to `false`, since previewing all workspaces and windows makes the GPU work very hard.
+* Do not set NVIDIA (dGPU) prime offload globally. Use `prime-run` or app-specific flags where available (e.g. for `google-chrome`). Setting prime offload globally will cause many apps to try to run on the dGPU, which leads to crashes for apps using DMA-BUF over EGL (such as quickshell), and also causes issues with `xdg-desktop-portal` for reasons I still don’t fully understand. Apps that request screen capture (e.g. OBS Studio, Discord) will fail to capture the screen.
+* “How do I log in after installing?” — There is a `fish/auto-Hypr.fish` script that runs when you start `fish` on `tty1`. But if you want a login screen (a display manager), you’ll need something like `sddm`, which is what I use.
+* There are udev rules to map GPU device nodes, because on a multi-GPU system the GPU might not get the same card index on every boot.
+* Black screen with sddm sometimes on boot? You might hit the same issue as I do. sddm (on X11) will look for a GPU to use as the display output on multi-GPU setups. On some machines (I’m not entirely sure which), it seems to pick the wrong GPU. I workaround this by writing an `X11/xorg.conf` that forces the iGPU to be used, and prevents X11 from being created on the dGPU. That way X11 chooses the correct GPU for display output.
+
+---
+
 <div align="center">
     <h1>【 end_4's Hyprland dotfiles 】</h1>
     <h3></h3>
@@ -170,4 +187,3 @@ Widget system: AGS | Support: No
    <a href="https://streamable.com/5qx614">
     <img src="https://github.com/end-4/dots-hyprland/assets/97237370/b15317b1-f295-49f5-b90c-fb6328b8d886" alt="Desktop Preview">
    </a>
-
