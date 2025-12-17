@@ -11,14 +11,15 @@ import qs.modules.waffle.looks
 WButton {
     id: root
 
+    property bool animateChoiceHighlight: true
+
     Layout.fillWidth: true
     implicitWidth: contentItem.implicitWidth
     horizontalPadding: 10
     verticalPadding: 11
-    inset: 0
     buttonSpacing: 8
 
-    property color color: {
+    color: {
         if (root.checked) {
             if (root.down) {
                 return root.colBackgroundHover;
@@ -36,12 +37,14 @@ WButton {
             return root.colBackground;
         }
     }
+    fgColor: colForeground
 
     background: Rectangle {
         id: backgroundRect
         radius: Looks.radius.medium
         color: root.color
         Behavior on color {
+            enabled: root.animateChoiceHighlight
             animation: Looks.transition.color.createObject(this)
         }
 
@@ -54,11 +57,14 @@ WButton {
                 implicitHeight: 3
                 radius: width / 2
                 color: Looks.colors.accent
+                property bool forceZeroHeight: true
+                height: forceZeroHeight ? 0 : Math.max(16, root.background.height - 18 * 2)
                 Component.onCompleted: {
-                    implicitHeight = 16;
+                    forceZeroHeight = false;
                 }
 
-                Behavior on implicitHeight {
+                Behavior on height {
+                    enabled: root.animateChoiceHighlight
                     animation: Looks.transition.opacity.createObject(this)
                 }
             }

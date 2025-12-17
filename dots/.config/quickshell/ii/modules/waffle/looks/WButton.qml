@@ -16,12 +16,15 @@ Button {
     property color colBackgroundToggledHover: Looks.colors.accentHover
     property color colBackgroundToggledActive: Looks.colors.accentActive
     property color colForeground: Looks.colors.fg
+    property color colForegroundToggled: Looks.colors.accentFg
+    property color colForegroundDisabled: ColorUtils.transparentize(Looks.colors.subfg, 0.4)
     property alias backgroundOpacity: backgroundRect.opacity
     property color color: {
+        if (!root.enabled) return colBackground;
         if (root.checked) {
             if (root.down) {
                 return root.colBackgroundToggledActive;
-            } else if (root.hovered && !root.down) {
+            } else if (root.hovered) {
                 return root.colBackgroundToggledHover;
             } else {
                 return root.colBackgroundToggled;
@@ -29,31 +32,43 @@ Button {
         }
         if (root.down) {
             return root.colBackgroundActive;
-        } else if (root.hovered && !root.down) {
+        } else if (root.hovered) {
             return root.colBackgroundHover;
         } else {
             return root.colBackground;
         }
     }
+    property color fgColor: {
+        if (root.checked) return root.colForegroundToggled
+        if (root.enabled) return root.colForeground
+        return root.colForegroundDisabled
+    }
+    property alias horizontalAlignment: buttonText.horizontalAlignment
+    font {
+        family: Looks.font.family.ui
+        pixelSize: Looks.font.pixelSize.large
+        weight: Looks.font.weight.regular
+    }
 
     // Hover stuff
-    signal hoverTimedOut()
+    signal hoverTimedOut
     property bool shouldShowTooltip: false
+    ToolTip.delay: 400
     property Timer hoverTimer: Timer {
         id: hoverTimer
         running: root.hovered
-        interval: 400
+        interval: root.ToolTip.delay
         onTriggered: {
-            root.hoverTimedOut()
+            root.hoverTimedOut();
         }
     }
     onHoverTimedOut: {
-        root.shouldShowTooltip = true
+        root.shouldShowTooltip = true;
     }
     onHoveredChanged: {
         if (!root.hovered) {
-            root.shouldShowTooltip = false
-            root.hoverTimer.stop()
+            root.shouldShowTooltip = false;
+            root.hoverTimer.stop();
         }
     }
 
@@ -64,7 +79,7 @@ Button {
     property var altAction: () => {}
     property var middleClickAction: () => {}
 
-    property real inset: 2
+    property real inset: 0
     topInset: inset
     bottomInset: inset
     leftInset: inset
@@ -77,8 +92,8 @@ Button {
     property alias border: backgroundRect.border
     horizontalPadding: 10
     verticalPadding: 6
-    implicitHeight: contentItem.implicitHeight + verticalPadding * 2
-    implicitWidth: contentItem.implicitWidth + horizontalPadding * 2
+    implicitHeight: contentItem.implicitHeight + verticalPadding * 2 + topInset + bottomInset
+    implicitWidth: contentItem.implicitWidth + horizontalPadding * 2 + leftInset + rightInset
 
     background: Rectangle {
         id: backgroundRect
@@ -92,10 +107,13 @@ Button {
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.RightButton | Qt.MiddleButton
-        onClicked: (event) => {
-            if (event.button === Qt.LeftButton) root.clicked();
-            if (event.button === Qt.RightButton) root.altAction();
-            if (event.button === Qt.MiddleButton) root.middleClickAction();
+        onClicked: event => {
+            if (event.button === Qt.LeftButton)
+                root.clicked();
+            if (event.button === Qt.RightButton)
+                root.altAction();
+            if (event.button === Qt.MiddleButton)
+                root.middleClickAction();
         }
     }
 
@@ -117,23 +135,22 @@ Button {
             FluentIcon {
                 id: buttonIcon
                 monochrome: true
-                implicitSize: 16
+                implicitSize: 18
                 Layout.leftMargin: root.iconLeftMargin
                 Layout.fillWidth: false
                 Layout.alignment: Qt.AlignVCenter
                 icon: root.icon.name
-                color: root.colForeground
+                color: root.fgColor
                 visible: root.icon.name !== ""
             }
             WText {
+                id: buttonText
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                 text: root.text
                 horizontalAlignment: Text.AlignLeft
-                font {
-                    pixelSize: Looks.font.pixelSize.large
-                }
-                color: root.colForeground
+                font: root.font
+                color: root.fgColor
             }
         }
     }

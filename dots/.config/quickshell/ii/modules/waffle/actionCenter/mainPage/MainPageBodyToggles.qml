@@ -87,45 +87,16 @@ Item {
         }
     }
 
-    Column {
+    VerticalPageIndicator {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 6
-        spacing: 6
-
-        FluentIcon {
-            anchors.horizontalCenter: parent.horizontalCenter
-            implicitSize: 12
-            icon: "caret-up"
-            color: Looks.colors.controlBg
-            filled: true
-            opacity: root.currentPage > 0 ? 1 : 0
-        }
-
-        Repeater {
-            model: root.pages
-            delegate: Item {
-                required property int index
-                anchors.horizontalCenter: parent.horizontalCenter
-                implicitWidth: 6
-                implicitHeight: 6
-
-                Circle {
-                    anchors.centerIn: parent
-                    diameter: index === root.currentPage ? 6 : 4
-                    color: Looks.colors.controlBg
-                }
-            }
-        }
-
-        FluentIcon {
-            anchors.horizontalCenter: parent.horizontalCenter
-            implicitSize: 12
-            icon: "caret-down"
-            color: Looks.colors.controlBg
-            filled: true
-            opacity: root.currentPage < (root.pages - 1) ? 1 : 0
-        }
+        
+        currentIndex: root.currentPage
+        count: root.pages
+        onClicked: (index) => root.currentPage = index
+        onIncreasePage: root.increasePage();
+        onDecreasePage: root.decreasePage();
     }
 
     FocusedScrollMouseArea {
@@ -133,7 +104,7 @@ Item {
         anchors.fill: parent
         acceptedButtons: Qt.NoButton
         hoverEnabled: false
-        onScrollUp: decreasePage();
-        onScrollDown: increasePage();
+        onScrollUp: root.decreasePage();
+        onScrollDown: root.increasePage();
     }
 }
