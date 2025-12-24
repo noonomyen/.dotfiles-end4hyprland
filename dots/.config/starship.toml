@@ -1,100 +1,98 @@
-# Don't print a new line at the start of the prompt
+"$schema" = "https://starship.rs/config-schema.json"
+
 add_newline = false
-# Pipes ╰─ ╭─
-# Powerline symbols                                     
-# Wedges 🭧🭒 🭣🭧🭓
-# Random noise 🬖🬥🬔🬗
-# Cool stuff 󰜥   
 
-# format = """
-# $cmd_duration$username$hostname $directory $git_branch
-# $character
-# """
 format = """
-$cmd_duration 󰜥 $directory $git_branch
-$character"""
+$status\
+$jobs\
+$username\
+$hostname\
+[](fg:color_bg1 bg:color_blue)\
+$directory\
+[](fg:color_blue bg:color_green)\
+$git_branch\
+$git_commit\
+$git_status\
+[](fg:color_green bg:none) \
+"""
 
-# Replace the "❯" symbol in the prompt with "➜"
-[character]                            # The name of the module we are configuring is "character"
-success_symbol = "[   ](bold fg:blue)"
-error_symbol = "[   ](bold fg:red)"
+palette = "onedark_pro"
 
-# Disable the package module, hiding it from the prompt completely
-[package]
-disabled = true
+# OneDark-Pro palette (from your kitty theme)
+[palettes.onedark_pro]
+color_fg0    = "#ABB2BF"
+color_bg0    = "#282C34"
+color_bg1    = "#3F4451"
+color_red    = "#E06C75"
+color_green  = "#98C379"
+color_yellow = "#D19A66"
+color_blue   = "#61AFEF"
+color_purple = "#C678DD"
+color_cyan   = "#56B6C2"
+color_white  = "#D7DAE0"
 
-[git_branch]
-style = "bg: cyan"
-symbol = "󰘬"
-truncation_length = 12
-truncation_symbol = ""
-format = "󰜥 [](bold fg:cyan)[$symbol $branch(:$remote_branch)](fg:black bg:cyan)[ ](bold fg:cyan)"
+[status]
+disabled = false
+success_symbol = ""
+format = "(fg:color_red)[ $status ](fg:color_fg0 bg:color_red)[](fg:color_red bg:color_bg1)"
+style = "fg:color_fg0 bg:color_red"
 
-[git_commit]
-commit_hash_length = 4
-tag_symbol = " "
+[jobs]
+symbol = ""
+format = "[ $symbol ](fg:color_fg0 bg:color_bg1)"
+style = "fg:color_fg0 bg:color_bg1"
+number_threshold = 1
+symbol_threshold = 1
 
-[git_state]
-format = '[\($state( $progress_current of $progress_total)\)]($style) '
-cherry_pick = "[🍒 PICKING](bold red)"
-
-[git_status]
-conflicted = " 🏳 "
-ahead = " 🏎💨 "
-behind = " 😰 "
-diverged = " 😵 "
-untracked = " 🤷 ‍"
-stashed = " 📦 "
-modified = " 📝 "
-staged = '[++\($count\)](green)'
-renamed = " ✍️ "
-deleted = " 🗑 "
+[username]
+show_always = true
+format = "[ $user](fg:color_fg0 bg:color_bg1)"
+style_user = "fg:color_fg0 bg:color_bg1"
+style_root = "fg:color_fg0 bg:color_bg1"
 
 [hostname]
 ssh_only = false
-format =  "[•$hostname](bg:cyan bold fg:black)[](bold fg:cyan)"
-trim_at = ".companyname.com"
-disabled = false
-
-[line_break]
-disabled = false
-
-[memory_usage]
-disabled = true
-threshold = -1
-symbol = " "
-style = "bold dimmed green"
-
-[time]
-disabled = true
-format = '🕙[\[ $time \]]($style) '
-time_format = "%T"
-
-[username]
-style_user = "bold bg:cyan fg:black"
-style_root = "red bold"
-format = "[](bold fg:cyan)[$user]($style)"
-disabled = false
-show_always = true
+format = "[@$hostname ](fg:color_fg0 bg:color_bg1)"
+style = "fg:color_fg0 bg:color_bg1"
 
 [directory]
-home_symbol = "  "
-read_only = "  "
-style = "bg:green fg:black"
-truncation_length = 6
-truncation_symbol = " ••/"
-format = '[](bold fg:green)[󰉋 $path]($style)[](bold fg:green)'
+home_symbol = "~"
+truncation_length = 0
+truncate_to_repo = false
+read_only = " "
+read_only_style = "fg:color_fg0 bg:color_blue"
+format = "[ $path$read_only ](fg:color_bg0 bg:color_blue)"
+style = "fg:color_bg0 bg:color_blue"
 
+[git_branch]
+symbol = ""
+only_attached = true
+format = "[ $symbol $branch ](fg:color_bg0 bg:color_green)"
+style = "fg:color_bg0 bg:color_yellow"
 
-[directory.substitutions]
-"Desktop" = "  "
-"Documents" = "  "
-"Downloads" = "  "
-"Music" = " 󰎈 "
-"Pictures" = "  "
-"Videos" = "  "
-"GitHub" = " 󰊤 "
+[git_commit]
+only_detached = true
+commit_hash_length = 7
+tag_disabled = false
+tag_symbol = " "
+format = "[( $tag)( ↳ $hash )](fg:color_bg0 bg:color_green)"
+style = "fg:color_bg0 bg:color_yellow"
 
-[cmd_duration]
-min_time = 0
-format = '[](bold fg:yellow)[󰪢 $duration](bold bg:yellow fg:black)[](bold fg:yellow)'
+[git_state]
+disabled = true
+
+[git_status]
+disabled = false
+format = "[$all_status ](fg:color_bg0 bg:color_green)"
+conflicted  = "C"
+stashed     = "SS"
+deleted     = "D"
+renamed     = "R"
+modified    = "M"
+typechanged = "T"
+staged      = "SG"
+untracked   = "U"
+ahead      = ""
+behind     = ""
+diverged   = ""
+up_to_date = ""
